@@ -15,6 +15,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     public void setContentView(int layoutResID) {
+        Log.d(TAG, "setContentView: ");
 
         ConstraintLayout constraintLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.activity_base_layout, null);
         FrameLayout frameLayout = constraintLayout.findViewById(R.id.activity_content);

@@ -1,7 +1,10 @@
 package com.example.codingwithmitchmvvmretrofit2.request;
 
+import com.example.codingwithmitchmvvmretrofit2.models.Post;
 import com.example.codingwithmitchmvvmretrofit2.request.responses.RecipeResponse;
 import com.example.codingwithmitchmvvmretrofit2.request.responses.RecipeSearchResponse;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -23,4 +26,7 @@ public interface RecipeApi {
             @Query("key") String key,
             @Query("rId") String recipe_id
     );
+
+    @GET("posts")
+    Call<List<Post>> getPosts();
 }

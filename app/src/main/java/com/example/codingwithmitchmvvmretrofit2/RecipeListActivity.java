@@ -5,37 +5,45 @@ import android.util.Log;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
 
 import com.example.codingwithmitchmvvmretrofit2.Util.Constants;
-import com.example.codingwithmitchmvvmretrofit2.models.Post;
 import com.example.codingwithmitchmvvmretrofit2.models.Recipe;
 import com.example.codingwithmitchmvvmretrofit2.request.RecipeApi;
 import com.example.codingwithmitchmvvmretrofit2.request.ServiceGenerator;
-import com.example.codingwithmitchmvvmretrofit2.request.responses.JsonPlaceHolderApi;
 import com.example.codingwithmitchmvvmretrofit2.request.responses.RecipeResponse;
-import com.example.codingwithmitchmvvmretrofit2.request.responses.RecipeSearchResponse;
+import com.example.codingwithmitchmvvmretrofit2.viewmodel.RecipeListViewModel;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RecipeListActivity extends AppCompatActivity {
     private static final String TAG = "RecipeListActivity";
+
+    private RecipeListViewModel mRecipeListViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
 
-        findViewById(R.id.test).setOnClickListener(v -> {
-            Log.d(TAG, "onClick: ");
-            myRetroFit();
+        mRecipeListViewModel = new ViewModelProvider(this).get(RecipeListViewModel.class);
+
+        subscribeObservers();
+    }
+    
+    private void subscribeObservers() {
+        mRecipeListViewModel.getRecipes().observe(this, new Observer<List<Recipe>>() {
+            @Override
+            public void onChanged(List<Recipe> recipes) {
+                
+            }
         });
     }
 

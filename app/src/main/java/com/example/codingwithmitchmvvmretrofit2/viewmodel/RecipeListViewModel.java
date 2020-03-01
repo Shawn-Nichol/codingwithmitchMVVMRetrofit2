@@ -12,6 +12,7 @@ import java.util.List;
 public class RecipeListViewModel extends ViewModel {
 
     private RecipeRepository mRecipeRepository;
+    private MutableLiveData<List<Recipe>> mRecipes;
 
     public RecipeListViewModel() {
         mRecipeRepository = RecipeRepository.getInstance();

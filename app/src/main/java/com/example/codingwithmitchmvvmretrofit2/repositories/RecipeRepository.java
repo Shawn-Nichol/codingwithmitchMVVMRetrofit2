@@ -4,13 +4,14 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.codingwithmitchmvvmretrofit2.models.Recipe;
+import com.example.codingwithmitchmvvmretrofit2.request.RecipeApiClient;
 
 import java.util.List;
 
 public class RecipeRepository {
 
     private static RecipeRepository INSTANCE;
-    private MutableLiveData<List<Recipe>> mRecipes;
+    private RecipeApiClient mRecipeApiClient;
 
 
     public static RecipeRepository getInstance() {
@@ -20,11 +21,11 @@ public class RecipeRepository {
         return INSTANCE;
     }
 
-    public RecipeRepository() {
-        mRecipes = new MutableLiveData<>();
+    private RecipeRepository() {
+        mRecipeApiClient = RecipeApiClient.getInstance();
     }
 
     public LiveData<List<Recipe>> getRecipes() {
-        return mRecipes;
+        return mRecipeApiClient.getRecipes();
     }
 }

@@ -1,7 +1,8 @@
 package com.example.codingwithmitchmvvmretrofit2.repositories;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.example.codingwithmitchmvvmretrofit2.models.Recipe;
 import com.example.codingwithmitchmvvmretrofit2.request.RecipeApiClient;
@@ -9,11 +10,15 @@ import com.example.codingwithmitchmvvmretrofit2.request.RecipeApiClient;
 import java.util.List;
 
 public class RecipeRepository {
+    private static final String TAG = "RecipeRepository";
 
     private static RecipeRepository INSTANCE;
     private RecipeApiClient mRecipeApiClient;
 
 
+    /**
+     * Singleton
+     */
     public static RecipeRepository getInstance() {
         if(INSTANCE == null) {
             INSTANCE = new RecipeRepository();
@@ -27,5 +32,14 @@ public class RecipeRepository {
 
     public LiveData<List<Recipe>> getRecipes() {
         return mRecipeApiClient.getRecipes();
+    }
+
+    public void searchRecipesApi(String query, int pageNumber) {
+        Log.d(TAG, "searchRecipesApi: ");
+        if(pageNumber == 0) {
+            pageNumber = 1;
+        }
+
+        mRecipeApiClient.searchRecipesApi(query, pageNumber);
     }
 }

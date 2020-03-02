@@ -24,7 +24,7 @@ import static com.example.codingwithmitchmvvmretrofit2.Util.Constants.NETWORK_TI
 public class RecipeApiClient {
 
     private static final String TAG = "RecipeApiClient";
-    
+
     private static RecipeApiClient INSTANCE;
     private MutableLiveData<List<Recipe>> mRecipes;
     private RetrieveRecipesRunnable mRetrieveRecipesRunnable;
@@ -48,30 +48,23 @@ public class RecipeApiClient {
      * Get data from website.
      */
     public void searchRecipesApi(String query, int pageNumber) {
+        Log.d(TAG, "searchRecipesApi: ");
 
         if(mRetrieveRecipesRunnable != null) {
             mRetrieveRecipesRunnable = null;
         }
         mRetrieveRecipesRunnable = new RetrieveRecipesRunnable(query, pageNumber);
-
-        final Future handler = AppExecutors.getInstance().networkIO().submit(new Runnable() {
-            @Override
-            public void run() {
-                // Retrieve data from rest api.
-//                mRecipes.postValue();
-
-            }
-        });
+        final Future handler = AppExecutors.get().networkIO().submit(mRetrieveRecipesRunnable);
 
         // Timeout for the data refresh.
-        AppExecutors.getInstance().networkIO().schedule(new Runnable() {
+        AppExecutors.get().networkIO().schedule(new Runnable() {
             @Override
             public void run() {
                 handler.cancel(true);
             }
         }, NETWORK_TIMEOUT, TimeUnit.MILLISECONDS);
     }
-    
+
     private class RetrieveRecipesRunnable implements Runnable {
 
         private String query;
@@ -85,7 +78,7 @@ public class RecipeApiClient {
         }
 
         /**
-         * 
+         * The code that will run on a background thread.
          */
         @Override
         public void run() {
@@ -114,23 +107,23 @@ public class RecipeApiClient {
                 mRecipes.postValue(null);
             }
 
-            
+
         }
-        
+
         private Call<RecipeSearchResponse> getRecipes(String query, int pageNumber) {
             return ServiceGenerator.getRecipeApi().searchRecipe(
-                    Constants.BASE_URL,
+                    Constants.API_KEY,
                     query,
                     String.valueOf(pageNumber)
             );
         }
-        
-        
+
+
         private void cancelRequest() {
             Log.d(TAG, "cancelRequest: canceling the search request.");
             cancelRequest = true;
         }
-        
+
     }
 
 }

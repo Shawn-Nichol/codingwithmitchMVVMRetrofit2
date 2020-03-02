@@ -11,7 +11,7 @@ public class AppExecutors {
      * Singleton, insures that this object is only created once.
      * @return returns the INSTANCE.
      */
-    public static AppExecutors getInstance() {
+    public static AppExecutors get() {
         if(INSTANCE == null) {
             INSTANCE = new AppExecutors();
         }
@@ -24,6 +24,6 @@ public class AppExecutors {
     private final ScheduledExecutorService mNetworkIO = Executors.newScheduledThreadPool(3);
 
     public ScheduledExecutorService networkIO() {
-        return networkIO();
+        return mNetworkIO;
     }
 }

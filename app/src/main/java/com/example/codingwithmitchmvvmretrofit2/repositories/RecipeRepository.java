@@ -35,7 +35,7 @@ public class RecipeRepository {
     }
 
     public void searchRecipesApi(String query, int pageNumber) {
-        Log.d(TAG, "searchRecipesApi: ");
+        Log.d(TAG, "searchRecipesApi: query " + query + ", pageNumber " + pageNumber);
         if(pageNumber == 0) {
             pageNumber = 1;
         }

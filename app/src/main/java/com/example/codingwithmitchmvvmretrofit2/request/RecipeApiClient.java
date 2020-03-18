@@ -48,7 +48,7 @@ public class RecipeApiClient {
      * Get data from website.
      */
     public void searchRecipesApi(String query, int pageNumber) {
-        Log.d(TAG, "searchRecipesApi: ");
+        Log.d(TAG, "searchRecipesApi: Query " + query + ", PageNumber " + pageNumber);
 
         if(mRetrieveRecipesRunnable != null) {
             mRetrieveRecipesRunnable = null;

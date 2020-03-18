@@ -32,6 +32,7 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         return new RecipeViewHolder(view, mOnRecipeListener);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         RequestOptions requestOptions = new RequestOptions()

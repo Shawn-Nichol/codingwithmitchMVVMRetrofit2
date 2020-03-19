@@ -3,7 +3,9 @@ package com.example.codingwithmitchmvvmretrofit2;
 import android.os.Bundle;
 import android.util.Log;
 
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,8 +40,9 @@ public class RecipeListActivity extends AppCompatActivity implements OnRecipeLis
         mRecipeListViewModel = new ViewModelProvider(this).get(RecipeListViewModel.class);
 
         initRecyclerView();
+        initSearchView();
         subscribeObservers();
-        testRetrofitRequest();
+
 
 
 
@@ -66,9 +69,23 @@ public class RecipeListActivity extends AppCompatActivity implements OnRecipeLis
         });
     }
 
-    private void testRetrofitRequest() {
-        Log.d(TAG, "testRetrofitRequest: ");
-        mRecipeListViewModel.searchRecipesApi("chicken", 1);
+
+    private void initSearchView() {
+        final SearchView searchView = findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d(TAG, "onQueryTextSubmit: query " + query);
+                mAdapter.displayLoading();
+                mRecipeListViewModel.searchRecipesApi(query, 1);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 
     @Override

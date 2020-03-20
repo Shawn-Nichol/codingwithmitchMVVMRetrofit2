@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.codingwithmitchmvvmretrofit2.Util.Testing;
+import com.example.codingwithmitchmvvmretrofit2.Util.VerticalSpacingItemDecorator;
 import com.example.codingwithmitchmvvmretrofit2.adapters.OnRecipeListener;
 import com.example.codingwithmitchmvvmretrofit2.adapters.RecipeRecyclerAdapter;
 import com.example.codingwithmitchmvvmretrofit2.models.Recipe;
@@ -20,69 +22,77 @@ import com.example.codingwithmitchmvvmretrofit2.viewmodel.RecipeListViewModel;
 
 import java.util.List;
 
-public class RecipeListActivity extends AppCompatActivity implements OnRecipeListener {
+public class RecipeListActivity extends BaseActivity implements OnRecipeListener {
+
     private static final String TAG = "RecipeListActivity";
 
     private RecipeListViewModel mRecipeListViewModel;
     private RecyclerView mRecyclerView;
     private RecipeRecyclerAdapter mAdapter;
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
-
         mRecyclerView = findViewById(R.id.recipe_list);
-
-
+        mSearchView = findViewById(R.id.search_view);
 
         // Different then source code, ViewModelProviders is deprecated.
         mRecipeListViewModel = new ViewModelProvider(this).get(RecipeListViewModel.class);
 
         initRecyclerView();
-        initSearchView();
         subscribeObservers();
-
-
-
-
+        initSearchView();
+        if(!mRecipeListViewModel.isViewingRecipes()){
+            displaySearchCategories();
+        }
     }
 
-    private void initRecyclerView() {
-        mAdapter = new RecipeRecyclerAdapter(this);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
-    
-    private void subscribeObservers() {
-        Log.d(TAG, "subscribeObservers: ");
+    private void subscribeObservers(){
+
         mRecipeListViewModel.getRecipes().observe(this, new Observer<List<Recipe>>() {
             @Override
-            public void onChanged(List<Recipe> recipes) {
-                Log.d(TAG, "onChanged: ");
-                if(recipes != null) {
-                    Log.d(TAG, "onChanged: ");
-                    Testing.printRecipes("network test", recipes);
-                    mAdapter.setRecipes(recipes);
+            public void onChanged(@Nullable List<Recipe> recipes) {
+                if(recipes != null){
+                    if(mRecipeListViewModel.isViewingRecipes()) {
+                        Testing.printRecipes("network test", recipes);
+                        mRecipeListViewModel.setIsPerformingQuery(false);
+                        mAdapter.setRecipes(recipes);
+                    }
                 }
             }
         });
     }
 
+    private void initRecyclerView(){
+        mAdapter = new RecipeRecyclerAdapter(this);
+        mRecyclerView.setAdapter(mAdapter);
+        VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(30);
+        mRecyclerView.addItemDecoration(itemDecorator);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-    private void initSearchView() {
-        final SearchView searchView = findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+    }
+
+    private void initSearchView(){
+
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.d(TAG, "onQueryTextSubmit: query " + query);
+
+                // Search the database for a recipe
                 mAdapter.displayLoading();
-                mRecipeListViewModel.searchRecipesApi(query, 1);
+                mRecipeListViewModel.searchRecipesApi("chicken", 1);
+                mSearchView.clearFocus();
+
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public boolean onQueryTextChange(String query) {
+
+                // Wait for the user to submit the search. So do nothing here.
+
                 return false;
             }
         });
@@ -90,11 +100,28 @@ public class RecipeListActivity extends AppCompatActivity implements OnRecipeLis
 
     @Override
     public void onRecipeClick(int position) {
-
+        Log.d(TAG, "onRecipeClick: clicked. " + position);
     }
 
     @Override
     public void onCategoryClick(String category) {
+        mAdapter.displayLoading();
+        mRecipeListViewModel.searchRecipesApi(category, 1);
+        mSearchView.clearFocus();
+    }
 
+    @Override
+    public void onBackPressed() {
+        if(mRecipeListViewModel.onBackPressed()) {
+            super.onBackPressed();
+        } else {
+            displaySearchCategories();
+        }
+    }
+
+    private void displaySearchCategories(){
+        Log.d(TAG, "displaySearchCategories: called.");
+        mRecipeListViewModel.setIsViewingRecipes(false);
+        mAdapter.displaySearchCategories();
     }
 }

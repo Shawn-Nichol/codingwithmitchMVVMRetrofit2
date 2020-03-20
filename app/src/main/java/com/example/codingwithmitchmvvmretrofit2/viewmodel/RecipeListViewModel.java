@@ -15,10 +15,13 @@ public class RecipeListViewModel extends ViewModel {
     private static final String TAG = "RecipeListViewModel";
 
     private RecipeRepository mRecipeRepository;
+    private boolean mIsViewingRecipes;
+    private boolean mIsPerformingQuery;
 
 
     public RecipeListViewModel() {
         mRecipeRepository = RecipeRepository.getInstance();
+        mIsPerformingQuery = false;
     }
 
     public LiveData<List<Recipe>> getRecipes() {
@@ -27,6 +30,36 @@ public class RecipeListViewModel extends ViewModel {
 
     public void searchRecipesApi(String query, int pageNumber) {
         Log.d(TAG, "searchRecipesApi: Query " + query + ", pageNumber " + pageNumber);
+        mIsViewingRecipes = true;
+        mIsPerformingQuery = true;
         mRecipeRepository.searchRecipesApi(query, pageNumber);
+    }
+
+    public boolean isViewingRecipes() {
+        return mIsViewingRecipes;
+    }
+
+    public void setIsViewingRecipes(boolean isViewingRecipes) {
+        mIsViewingRecipes = isViewingRecipes;
+    }
+
+    public void setIsPerformingQuery(Boolean isPerformingQuery) {
+        mIsPerformingQuery = isPerformingQuery;
+    }
+
+    public boolean isPerformaingQuery() {
+        return mIsPerformingQuery;
+    }
+
+    public boolean onBackPressed() {
+        if (mIsPerformingQuery) {
+            mRecipeRepository.cancelRequest();
+            mIsPerformingQuery = false;
+        }
+        if (mIsViewingRecipes) {
+            mIsViewingRecipes = false;
+            return false;
+        }
+        return true;
     }
 }

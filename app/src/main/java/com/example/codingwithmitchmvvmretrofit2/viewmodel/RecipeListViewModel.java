@@ -62,4 +62,10 @@ public class RecipeListViewModel extends ViewModel {
         }
         return true;
     }
+
+    public void searchNextPage() {
+        if(!mIsPerformingQuery && mIsViewingRecipes) {
+            mRecipeRepository.searchNextPage();
+        }
+    }
 }

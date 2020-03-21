@@ -2,11 +2,16 @@ package com.example.codingwithmitchmvvmretrofit2;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,6 +35,7 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     private RecyclerView mRecyclerView;
     private RecipeRecyclerAdapter mAdapter;
     private SearchView mSearchView;
+    Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +43,7 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         setContentView(R.layout.activity_recipe_list);
         mRecyclerView = findViewById(R.id.recipe_list);
         mSearchView = findViewById(R.id.search_view);
+        mToolbar = findViewById(R.id.toolbar);
 
         // Different then source code, ViewModelProviders is deprecated.
         mRecipeListViewModel = new ViewModelProvider(this).get(RecipeListViewModel.class);
@@ -47,6 +54,11 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         if(!mRecipeListViewModel.isViewingRecipes()){
             displaySearchCategories();
         }
+
+        setSupportActionBar(findViewById(R.id.toolbar));
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(" ");
+
     }
 
     private void subscribeObservers(){
@@ -123,5 +135,20 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         Log.d(TAG, "displaySearchCategories: called.");
         mRecipeListViewModel.setIsViewingRecipes(false);
         mAdapter.displaySearchCategories();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if(item.getItemId() == R.id.action_categories){
+            displaySearchCategories();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.recipe_search_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }

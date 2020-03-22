@@ -20,6 +20,9 @@ import java.util.List;
 
 public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+
+    private static final String TAG = "RecipeRecyclerAdapter";
+
     private static final int RECIPE_TYPE = 1;
     private static final int LOADING_TYPE = 2;
     private static final int CATEGORY_TYPE = 3;
@@ -151,5 +154,15 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
         mRecipes = categories;
         notifyDataSetChanged();
+    }
+
+    public Recipe getSelectedRecipe(int position) {
+        if(mRecipes != null) {
+            if(mRecipes.size() > 0) {
+                Log.d(TAG, "getSelectedRecipe: " + position);
+                return mRecipes.get(position);
+            }
+        }
+        return null;
     }
 }

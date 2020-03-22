@@ -36,6 +36,14 @@ public class RecipeRepository {
         return mRecipeApiClient.getRecipes();
     }
 
+    public LiveData<Recipe> getRecipe() {
+        return mRecipeApiClient.getRecipe();
+    }
+
+    public void searchRecipeById(String recipeId) {
+        mRecipeApiClient.searchRecipeById(recipeId);
+    }
+
     public void searchRecipesApi(String query, int pageNumber) {
         Log.d(TAG, "searchRecipesApi: query " + query + ", pageNumber " + pageNumber);
         if(pageNumber == 0) {
